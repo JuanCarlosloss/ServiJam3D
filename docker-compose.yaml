@@ -1,0 +1,46 @@
+services:
+  web:
+    build:
+      context: .
+      network: host
+    container_name: 3dprint_web
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    volumes:
+      - ./html:/var/www/html
+    depends_on:
+      - db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      MOONRAKER_URL: "http://host.docker.internal:7125"
+
+  db:
+    image: mariadb:11
+    container_name: 3dprint_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: print3d
+      MYSQL_USER: print3d_user
+      MYSQL_PASSWORD: print3d_pass
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: 3dprint_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_USER: print3d_user
+      PMA_PASSWORD: print3d_pass
+
+volumes:
+  db_data:

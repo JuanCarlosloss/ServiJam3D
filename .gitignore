@@ -1,0 +1,14 @@
+# Dependencias PHP (se reinstalan con: composer install)
+html/vendor/
+
+# Configuración con credenciales reales
+html/config.php
+
+# Archivos subidos por usuarios
+html/uploads/*
+!html/uploads/.gitkeep
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+*.log
